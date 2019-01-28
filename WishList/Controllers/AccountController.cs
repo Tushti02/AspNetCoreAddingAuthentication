@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WishList.Models;
-using Microsoft.AspNetCore.Authorization;
 using WishList.Models.AccountViewModels;
 
 namespace WishList.Controllers
 {
     [Authorize]
-    public class AccountController :Controller
+    public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -33,15 +33,17 @@ namespace WishList.Controllers
         public IActionResult Register(RegisterViewModel rmodel)
         {
             if (!ModelState.IsValid)
+            {
                 return View(rmodel);
+            }
 
             var user = new ApplicationUser();
             user.Email = rmodel.Email;
             user.UserName = rmodel.Email;
-            var result=_userManager.CreateAsync(user,rmodel.Password).Result;
-            if(!result.Succeeded)
+            var result = _userManager.CreateAsync(user, rmodel.Password).Result;
+            if (!result.Succeeded)
             {
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("Password", error.Description);
                 }
@@ -65,13 +67,18 @@ namespace WishList.Controllers
         public IActionResult Login(LoginViewModel lmodel)
         {
             if (!ModelState.IsValid)
+            {
                 return View(lmodel);
+            }
 
-            var SignInResult =_signInManager.PasswordSignInAsync(lmodel.Email, lmodel.Password, false, false).Result;
+            var SignInResult = _signInManager.PasswordSignInAsync(lmodel.Email, lmodel.Password, false, false).Result;
             if (!SignInResult.Succeeded)
+            {
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                return View(lmodel);
+            }
 
-                return RedirectToAction("Index", "Item");
+            return RedirectToAction("Index", "Item");
         }
 
         [HttpPost]
