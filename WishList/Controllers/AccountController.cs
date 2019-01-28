@@ -59,7 +59,7 @@ namespace WishList.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public IActionResult Login(LoginViewModel lmodel)
