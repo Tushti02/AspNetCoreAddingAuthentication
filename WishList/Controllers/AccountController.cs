@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace WishList.Controllers
 {
     [Authorize]
-    public class AccountController
+    public class AccountController :Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
