@@ -50,5 +50,36 @@ namespace WishList.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(LoginViewModel lmodel)
+        {
+            if (!ModelState.IsValid)
+                return View(lmodel);
+
+            var SignInResult =_signInManager.PasswordSignInAsync(lmodel.Email, lmodel.Password, false, false).Result;
+            if (!SignInResult.Succeeded)
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+
+                return RedirectToAction("Index", "Item");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult LogOut()
+        {
+            _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
